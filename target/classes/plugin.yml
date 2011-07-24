@@ -1,0 +1,10 @@
+name: Anouncer
+main: de.codeinfection.quickwango.Anouncer.Anouncer
+version: "1.0.0-SNAPSHOT"
+author: "Quick_Wango"
+commands:
+  anounce:
+    usage: "/<command> <name>"
+    description: "Anounces the content of a file"
+Soft-depends:
+  - Permissions

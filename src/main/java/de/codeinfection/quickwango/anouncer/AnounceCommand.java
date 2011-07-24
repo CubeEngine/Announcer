@@ -1,0 +1,81 @@
+package de.codeinfection.quickwango.Anouncer;
+
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
+import java.io.IOException;
+import org.bukkit.Server;
+import org.bukkit.command.Command;
+import org.bukkit.command.CommandExecutor;
+import org.bukkit.command.CommandSender;
+import org.bukkit.entity.Player;
+
+/**
+ *
+ * @author CodeInfection
+ */
+public class AnounceCommand implements CommandExecutor
+{
+    protected Server server;
+    protected File messageDir;
+    protected final int maxLines = 20;
+
+    public AnounceCommand(Server server, File dataFolder)
+    {
+        this.server = server;
+        this.messageDir = new File(dataFolder, "manualMessages");
+        this.messageDir.mkdirs();
+    }
+
+    public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
+    {
+        if (sender instanceof Player)
+        {
+            if (!Anouncer.has((Player)sender, "Anouncer.anounce"))
+            {
+                sender.sendMessage("Permission denied!");
+                return true;
+            }
+        }
+        if (args.length > 0)
+        {
+            if (!args[0].matches("[\\.\\\\/\\*\\?:\\|<>\"]"))
+            {
+                File messageFile = new File(this.messageDir, args[0] + ".txt");
+                if (messageFile.exists())
+                {
+                    try
+                    {
+                        BufferedReader reader = new BufferedReader(new FileReader(messageFile));
+                        String line = "";
+                        int lineCount = 0;
+                        while ((line = reader.readLine()) != null && lineCount < this.maxLines)
+                        {
+                            this.server.broadcastMessage(line.trim().replaceAll("&([a-f0-9])", "\u00A7$1"));
+                            ++lineCount;
+                        }
+                        reader.close();
+                    }
+                    catch (IOException e)
+                    {
+                        sender.sendMessage("Failed to load the announcement!");
+                        Anouncer.error("Failed to load the message file " + messageFile.getName() + "!", e);
+                    }
+                }
+                else
+                {
+                    sender.sendMessage("The given requested anouncement is not available!");
+                }
+            }
+            else
+            {
+                sender.sendMessage("The given name is invalid!");
+            }
+        }
+        else
+        {
+            sender.sendMessage("No file name given!");
+        }
+        return true;
+    }
+}
