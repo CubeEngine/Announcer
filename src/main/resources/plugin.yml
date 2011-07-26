@@ -6,5 +6,8 @@ commands:
   anounce:
     usage: "/<command> <name>"
     description: "Anounces the content of a file"
-Soft-depends:
+  reloadanouncer:
+    usage: "/<command>"
+    description: "Reloads the Anouncer plugin"
+softdepends:
   - Permissions

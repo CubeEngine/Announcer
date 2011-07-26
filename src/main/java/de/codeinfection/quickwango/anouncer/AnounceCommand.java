@@ -75,6 +75,7 @@ public class AnounceCommand implements CommandExecutor
         else
         {
             sender.sendMessage("No file name given!");
+            return false;
         }
         return true;
     }

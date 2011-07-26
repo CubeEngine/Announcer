@@ -89,6 +89,7 @@ public class Anouncer extends JavaPlugin
         {
             AnouncerTask task = new AnouncerTask(server, dataFolder);
 
+            debug("Start instantly? - " + String.valueOf(this.instantStart));
             if (this.scheduler.scheduleAsyncRepeatingTask(this, task, (this.instantStart ? 0 : interval), interval) < 0)
             {
                 error("Failed to schedule the anouncer task!");
@@ -103,6 +104,7 @@ public class Anouncer extends JavaPlugin
         }
 
         this.getCommand("anounce").setExecutor(new AnounceCommand(server, dataFolder));
+        this.getCommand("reloadanouncer").setExecutor(new ReloadanouncerCommand(this));
 
         System.out.println(this.getDescription().getName() + " (v" + this.getDescription().getVersion() + ") enabled");
     }
@@ -129,17 +131,17 @@ public class Anouncer extends JavaPlugin
 
     public static void log(String msg)
     {
-        log.log(Level.INFO, "[mcMMO] " + msg);
+        log.log(Level.INFO, "[Anouncer] " + msg);
     }
 
     public static void error(String msg)
     {
-        log.log(Level.SEVERE, "[mcMMO] " + msg);
+        log.log(Level.SEVERE, "[Anouncer] " + msg);
     }
 
     public static void error(String msg, Throwable t)
     {
-        log.log(Level.SEVERE, "[mcMMO] " + msg, t);
+        log.log(Level.SEVERE, "[Anouncer] " + msg, t);
     }
 
     public static void debug(String msg)
