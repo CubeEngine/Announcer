@@ -20,7 +20,6 @@ public class AnouncerTask implements Runnable
 
     public AnouncerTask(final Server server, final File dataFolder) throws IOException
     {
-        final int maxLines = 20;
         this.current = 0;
         this.server = server;
         this.messages = new ArrayList<ArrayList<String>>();
@@ -36,11 +35,9 @@ public class AnouncerTask implements Runnable
                 ArrayList<String> lines = new ArrayList<String>();
                 reader = new BufferedReader(new FileReader(messageFile));
 
-                int counter = 0;
-                while ((buffer = reader.readLine()) != null && counter < maxLines)
+                while ((buffer = reader.readLine()) != null)
                 {
                     lines.add(buffer.trim().replaceAll("&([a-f0-9])", "\u00A7$1"));
-                    ++counter;
                 }
 
                 reader.close();

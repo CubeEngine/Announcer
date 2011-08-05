@@ -18,7 +18,6 @@ public class AnounceCommand implements CommandExecutor
 {
     protected Server server;
     protected File messageDir;
-    protected final int maxLines = 20;
 
     public AnounceCommand(Server server, File dataFolder)
     {
@@ -48,11 +47,9 @@ public class AnounceCommand implements CommandExecutor
                     {
                         BufferedReader reader = new BufferedReader(new FileReader(messageFile));
                         String line = "";
-                        int lineCount = 0;
-                        while ((line = reader.readLine()) != null && lineCount < this.maxLines)
+                        while ((line = reader.readLine()) != null)
                         {
                             this.server.broadcastMessage(line.trim().replaceAll("&([a-f0-9])", "\u00A7$1"));
-                            ++lineCount;
                         }
                         reader.close();
                     }
