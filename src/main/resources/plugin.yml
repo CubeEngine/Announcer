@@ -1,7 +1,11 @@
 name: Anouncer
 main: de.codeinfection.quickwango.Anouncer.Anouncer
 version: "${project.version}"
-author: "Quick_Wango"
+authors:
+  - "Quick_Wango"
+softdepends:
+  - Permissions
+description: "Automaticly anounce text files to the server."
 commands:
   anounce:
     usage: "/<command> <name>"
