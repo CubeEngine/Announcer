@@ -24,7 +24,7 @@ public class AnnouncerTask implements Runnable
         this.server = server;
         this.messages = new ArrayList<ArrayList<String>>();
         File messagesDir = new File(dataFolder, "scheduledMessages");
-        messagesDir.mkdir();
+        messagesDir.mkdirs();
         File[] messageFiles = messagesDir.listFiles(new TxtFilter());
         BufferedReader reader = null;
         String buffer = "";

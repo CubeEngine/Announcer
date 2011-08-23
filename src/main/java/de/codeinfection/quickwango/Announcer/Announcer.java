@@ -79,6 +79,9 @@ public class Announcer extends JavaPlugin
 
         debug("Calculated a interval of " + interval + " ticks");
 
+        this.getCommand("announce").setExecutor(new AnnounceCommand(this.server, this.dataFolder));
+        this.getCommand("reloadannouncer").setExecutor(new ReloadannouncerCommand(this));
+
         Permissions permissions = (Permissions)this.pm.getPlugin("Permissions");
         if (permissions != null)
         {
@@ -102,9 +105,6 @@ public class Announcer extends JavaPlugin
             error(e.getLocalizedMessage());
             return;
         }
-
-        this.getCommand("announce").setExecutor(new AnnounceCommand(server, dataFolder));
-        this.getCommand("reloadannouncer").setExecutor(new ReloadannouncerCommand(this));
 
         System.out.println(this.getDescription().getName() + " (v" + this.getDescription().getVersion() + ") enabled");
     }
