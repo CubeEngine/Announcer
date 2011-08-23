@@ -34,6 +34,11 @@ Operators and the console have all permissions
  Changes
 =============
 
+Version 1.1.0
+
+    Fixed typo (anounce -> announce)
+    added SuperPerms support
+
 Version 1.0.0
 
     Initial release

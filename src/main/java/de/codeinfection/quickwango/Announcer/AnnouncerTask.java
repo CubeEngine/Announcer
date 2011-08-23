@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.announcer;
+package de.codeinfection.quickwango.Announcer;
 
 import java.io.BufferedReader;
 import java.io.File;

@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.announcer;
+package de.codeinfection.quickwango.Announcer;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;

@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.announcer;
+package de.codeinfection.quickwango.Announcer;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
@@ -154,6 +154,17 @@ public class Announcer extends JavaPlugin
 
     public static boolean has(Player player, String permission)
     {
-        return (player.hasPermission(permission) || (permissionHandler != null && permissionHandler.has(player, permission)));
+        if (player.isOp())
+        {
+            return true;
+        }
+        else if (permissionHandler != null)
+        {
+            return permissionHandler.has(player, permission);
+        }
+        else
+        {
+            return player.hasPermission(permission);
+        }
     }
 }
