@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.Anouncer;
+package de.codeinfection.quickwango.announcer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -12,13 +12,13 @@ import org.bukkit.Server;
  *
  * @author CodeInfection
  */
-public class AnouncerTask implements Runnable
+public class AnnouncerTask implements Runnable
 {
     protected ArrayList<ArrayList<String>> messages;
     protected int current;
     protected Server server;
 
-    public AnouncerTask(final Server server, final File dataFolder) throws IOException
+    public AnnouncerTask(final Server server, final File dataFolder) throws IOException
     {
         this.current = 0;
         this.server = server;
@@ -42,18 +42,18 @@ public class AnouncerTask implements Runnable
 
                 reader.close();
                 this.messages.add(lines);
-                Anouncer.debug("Loaded " + messageFile.getName() + "!");
+                Announcer.debug("Loaded " + messageFile.getName() + "!");
             }
             catch (IOException e)
             {
-                Anouncer.error("Failed to read " + messageFile.getName() + "!", e);
+                Announcer.error("Failed to read " + messageFile.getName() + "!", e);
             }
         }
         if (this.messages.isEmpty())
         {
             throw new IOException("No message file found!");
         }
-        Anouncer.log("Loaded " + this.messages.size() + " message files!");
+        Announcer.log("Loaded " + this.messages.size() + " message files!");
     }
 
     protected ArrayList<String> nextMessage()

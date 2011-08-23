@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.Anouncer;
+package de.codeinfection.quickwango.announcer;
 
 import java.io.BufferedReader;
 import java.io.File;
@@ -14,12 +14,12 @@ import org.bukkit.entity.Player;
  *
  * @author CodeInfection
  */
-public class AnounceCommand implements CommandExecutor
+public class AnnounceCommand implements CommandExecutor
 {
     protected Server server;
     protected File messageDir;
 
-    public AnounceCommand(Server server, File dataFolder)
+    public AnnounceCommand(Server server, File dataFolder)
     {
         this.server = server;
         this.messageDir = new File(dataFolder, "manualMessages");
@@ -30,7 +30,7 @@ public class AnounceCommand implements CommandExecutor
     {
         if (sender instanceof Player)
         {
-            if (!Anouncer.has((Player)sender, "Anouncer.anounce"))
+            if (!Announcer.has((Player)sender, "Announcer.announce"))
             {
                 sender.sendMessage("Permission denied!");
                 return true;
@@ -56,12 +56,12 @@ public class AnounceCommand implements CommandExecutor
                     catch (IOException e)
                     {
                         sender.sendMessage("Failed to load the announcement!");
-                        Anouncer.error("Failed to load the message file " + messageFile.getName() + "!", e);
+                        Announcer.error("Failed to load the message file " + messageFile.getName() + "!", e);
                     }
                 }
                 else
                 {
-                    sender.sendMessage("The given requested anouncement is not available!");
+                    sender.sendMessage("The given requested announcement is not available!");
                 }
             }
             else

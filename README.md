@@ -1,14 +1,14 @@
  Description
 =============
 
-Anouncer loads small text files and broadcasts them in a configured interval.
+Announcer loads small text files and broadcasts them in a configured interval.
 
 
  Features
 =============
 
-- Anounce txt files automaticly to the server
-- Anounce files manually
+- Announce txt files automaticly to the server
+- Announce files manually
 - Supports color codes (&0, &1, &3, ...)
 - Interval can be set in Ticks, Seconds, Minutes, Hours, Days
 
@@ -16,7 +16,7 @@ Anouncer loads small text files and broadcasts them in a configured interval.
 Installation
 =============
 
-- Just put the Anouncer.jar into you plugins folder
+- Just put the Announcer.jar into you plugins folder
 - create you messages as *.txt files in the specific folders
 - restart/reload your server
 - The configuration file will be auto-generated on the first start.
@@ -25,8 +25,8 @@ Installation
  Permissions
 =============
 
-- Anouncer.anounce - allows the player to anounce messages
-- Anouncer.reloadanouncer - allows the player to reload the plugin
+- Announcer.announce - allows the player to announce messages
+- Announcer.reloadAnnouncer - allows the player to reload the plugin
 
 Operators and the console have all permissions
 

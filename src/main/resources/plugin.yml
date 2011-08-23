@@ -1,17 +1,30 @@
-name: Anouncer
-main: de.codeinfection.quickwango.Anouncer.Anouncer
+name: Announcer
+main: de.codeinfection.quickwango.Announcer.Announcer
 version: "${project.version}"
 authors:
   - "Quick_Wango"
 softdepends:
   - Permissions
-description: "Automaticly anounce text files to the server."
+description: "Automaticly announce text files to the server."
 commands:
-  anounce:
+  announce:
     usage: "/<command> <name>"
-    description: "Anounces the content of a file"
-  reloadanouncer:
+    description: "Announces the content of a file"
+  reloadannouncer:
     usage: "/<command>"
-    description: "Reloads the Anouncer plugin"
-softdepends:
+    description: "Reloads the Announcer plugin"
+soft-depends:
   - Permissions
+permissions:
+  Announcer.*:
+    description: "Allows the player to do everything"
+    default: op
+    children:
+      Announcer.announce: true
+      Announcer.reload: true
+  Announcer.announce:
+    description: "Allows the player to manually announce messages"
+    default: op
+  Announcer.reload:
+    description: "Allows the player to reload this plugin"
+    default: op

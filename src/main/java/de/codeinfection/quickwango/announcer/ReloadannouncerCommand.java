@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.Anouncer;
+package de.codeinfection.quickwango.announcer;
 
 import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
@@ -10,18 +10,18 @@ import org.bukkit.entity.Player;
  *
  * @author CodeInfection
  */
-public class ReloadanouncerCommand implements CommandExecutor
+public class ReloadannouncerCommand implements CommandExecutor
 {
-    protected Anouncer plugin;
+    protected Announcer plugin;
 
-    public ReloadanouncerCommand(Anouncer plugin)
+    public ReloadannouncerCommand(Announcer plugin)
     {
         this.plugin = plugin;
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
-        if (sender instanceof Player && !Anouncer.has((Player)sender, "Anouncer.reload"))
+        if (sender instanceof Player && !Announcer.has((Player)sender, "Announcer.reload"))
         {
             sender.sendMessage(ChatColor.RED + "Permission denied!");
             return true;
@@ -29,7 +29,7 @@ public class ReloadanouncerCommand implements CommandExecutor
 
         this.plugin.onDisable();
         this.plugin.onEnable();
-        sender.sendMessage(ChatColor.GREEN + "Anouncer was successfully reloaded!");
+        sender.sendMessage(ChatColor.GREEN + "Announcer was successfully reloaded!");
 
         return true;
     }

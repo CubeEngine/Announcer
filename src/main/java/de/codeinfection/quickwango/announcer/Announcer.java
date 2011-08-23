@@ -1,4 +1,4 @@
-package de.codeinfection.quickwango.Anouncer;
+package de.codeinfection.quickwango.announcer;
 
 import com.nijiko.permissions.PermissionHandler;
 import com.nijikokun.bukkit.Permissions.Permissions;
@@ -15,7 +15,7 @@ import org.bukkit.Server;
 import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 
-public class Anouncer extends JavaPlugin
+public class Announcer extends JavaPlugin
 {
     protected static final Logger log = Logger.getLogger("Minecraft");
     public static boolean debugMode = false;
@@ -87,12 +87,12 @@ public class Anouncer extends JavaPlugin
 
         try
         {
-            AnouncerTask task = new AnouncerTask(server, dataFolder);
+            AnnouncerTask task = new AnnouncerTask(server, dataFolder);
 
             debug("Start instantly? - " + String.valueOf(this.instantStart));
             if (this.scheduler.scheduleAsyncRepeatingTask(this, task, (this.instantStart ? 0 : interval), interval) < 0)
             {
-                error("Failed to schedule the anouncer task!");
+                error("Failed to schedule the announcer task!");
                 return;
             }
         }
@@ -103,8 +103,8 @@ public class Anouncer extends JavaPlugin
             return;
         }
 
-        this.getCommand("anounce").setExecutor(new AnounceCommand(server, dataFolder));
-        this.getCommand("reloadanouncer").setExecutor(new ReloadanouncerCommand(this));
+        this.getCommand("announce").setExecutor(new AnnounceCommand(server, dataFolder));
+        this.getCommand("reloadannouncer").setExecutor(new ReloadannouncerCommand(this));
 
         System.out.println(this.getDescription().getName() + " (v" + this.getDescription().getVersion() + ") enabled");
     }
@@ -131,17 +131,17 @@ public class Anouncer extends JavaPlugin
 
     public static void log(String msg)
     {
-        log.log(Level.INFO, "[Anouncer] " + msg);
+        log.log(Level.INFO, "[Announcer] " + msg);
     }
 
     public static void error(String msg)
     {
-        log.log(Level.SEVERE, "[Anouncer] " + msg);
+        log.log(Level.SEVERE, "[Announcer] " + msg);
     }
 
     public static void error(String msg, Throwable t)
     {
-        log.log(Level.SEVERE, "[Anouncer] " + msg, t);
+        log.log(Level.SEVERE, "[Announcer] " + msg, t);
     }
 
     public static void debug(String msg)
@@ -154,6 +154,6 @@ public class Anouncer extends JavaPlugin
 
     public static boolean has(Player player, String permission)
     {
-        return (player.isOp() || (permissionHandler != null && permissionHandler.has(player, permission)));
+        return (player.hasPermission(permission) || (permissionHandler != null && permissionHandler.has(player, permission)));
     }
 }

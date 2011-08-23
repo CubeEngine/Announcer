@@ -2,11 +2,11 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>de.codeinfection</groupId>
-    <artifactId>Anouncer</artifactId>
+    <artifactId>Announcer</artifactId>
     <version>1.0.0</version>
     <packaging>jar</packaging>
 
-    <name>Anouncer</name>
+    <name>Announcer</name>
     <url>http://mc-portal.de</url>
     <description>A Bukkit plugin to broadcast scheduled messages.</description>
 
