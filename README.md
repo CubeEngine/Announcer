@@ -26,7 +26,7 @@ Installation
 =============
 
 - Announcer.announce - allows the player to announce messages
-- Announcer.reloadAnnouncer - allows the player to reload the plugin
+- Announcer.reloadannouncer - allows the player to reload the plugin
 
 Operators and the console have all permissions
 
