@@ -62,7 +62,7 @@ public class AnnounceCommand implements CommandExecutor
                 }
                 else
                 {
-                    sender.sendMessage("The given requested announcement is not available!");
+                    sender.sendMessage("The requested announcement is not available!");
                 }
             }
             else
