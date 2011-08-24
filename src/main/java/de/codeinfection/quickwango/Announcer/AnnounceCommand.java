@@ -4,6 +4,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
@@ -32,7 +33,7 @@ public class AnnounceCommand implements CommandExecutor
         {
             if (!Announcer.has((Player)sender, "Announcer.announce"))
             {
-                sender.sendMessage("Permission denied!");
+                sender.sendMessage(ChatColor.RED + "Permission denied!");
                 return true;
             }
         }

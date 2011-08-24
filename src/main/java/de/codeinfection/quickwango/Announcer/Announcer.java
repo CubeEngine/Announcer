@@ -154,17 +154,19 @@ public class Announcer extends JavaPlugin
 
     public static boolean has(Player player, String permission)
     {
+        boolean result = false;
         if (player.isOp())
         {
-            return true;
+            result = true;
         }
         else if (permissionHandler != null)
         {
-            return permissionHandler.has(player, permission);
+            result = permissionHandler.has(player, permission);
         }
         else
         {
-            return player.hasPermission(permission);
+            result = player.hasPermission(permission);
         }
+        return result;
     }
 }

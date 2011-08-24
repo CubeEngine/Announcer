@@ -37,7 +37,8 @@ Operators and the console have all permissions
 Version 1.1.0
 
     Fixed typo (anounce -> announce)
-    added SuperPerms support
+    Added SuperPerms support
+    Fixed the commands not being registered if there are no scheduled messages
 
 Version 1.0.0
 
