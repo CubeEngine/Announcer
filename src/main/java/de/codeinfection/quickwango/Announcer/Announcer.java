@@ -18,7 +18,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 public class Announcer extends JavaPlugin
 {
-    protected static final Logger log = Logger.getLogger("Minecraft");
+    protected static final Logger logger = Logger.getLogger("Minecraft");
     public static boolean debugMode = false;
     
     protected Server server;
@@ -124,7 +124,7 @@ public class Announcer extends JavaPlugin
 
     public static void log(Level logLevel, String msg, Throwable t)
     {
-        log.log(logLevel, "[Announcer] " + msg, t);
+        logger.log(logLevel, "[Announcer] " + msg, t);
     }
 
     public static void log(Level logLevel, String msg)
