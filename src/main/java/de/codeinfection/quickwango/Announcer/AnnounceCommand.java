@@ -31,7 +31,7 @@ public class AnnounceCommand implements CommandExecutor
     {
         if (sender instanceof Player)
         {
-            if (!Announcer.has((Player)sender, "Announcer.announce"))
+            if (!((Player)sender).hasPermission("Announcer.announce"))
             {
                 sender.sendMessage(ChatColor.RED + "Permission denied!");
                 return true;
@@ -56,23 +56,23 @@ public class AnnounceCommand implements CommandExecutor
                     }
                     catch (IOException e)
                     {
-                        sender.sendMessage("Failed to load the announcement!");
+                        sender.sendMessage(ChatColor.RED + "Failed to load the announcement!");
                         Announcer.error("Failed to load the message file " + messageFile.getName() + "!", e);
                     }
                 }
                 else
                 {
-                    sender.sendMessage("The requested announcement is not available!");
+                    sender.sendMessage(ChatColor.RED + "The requested announcement is not available!");
                 }
             }
             else
             {
-                sender.sendMessage("The given name is invalid!");
+                sender.sendMessage(ChatColor.RED + "The given name is invalid!");
             }
         }
         else
         {
-            sender.sendMessage("No file name given!");
+            sender.sendMessage(ChatColor.RED + "No file name given!");
             return false;
         }
         return true;

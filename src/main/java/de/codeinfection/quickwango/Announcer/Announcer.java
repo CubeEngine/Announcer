@@ -1,7 +1,5 @@
 package de.codeinfection.quickwango.Announcer;
 
-import com.nijiko.permissions.PermissionHandler;
-import com.nijikokun.bukkit.Permissions.Permissions;
 import java.io.File;
 import java.io.IOException;
 import java.util.logging.Level;
@@ -12,14 +10,12 @@ import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.util.config.Configuration;
 import org.bukkit.Server;
-import org.bukkit.entity.Player;
 import org.bukkit.scheduler.BukkitScheduler;
 
 public class Announcer extends JavaPlugin
 {
     protected static final Logger log = Logger.getLogger("Minecraft");
     public static boolean debugMode = false;
-    protected static PermissionHandler permissionHandler = null;
     
     protected Server server;
     protected PluginManager pm;
@@ -81,12 +77,6 @@ public class Announcer extends JavaPlugin
 
         this.getCommand("announce").setExecutor(new AnnounceCommand(this.server, this.dataFolder));
         this.getCommand("reloadannouncer").setExecutor(new ReloadannouncerCommand(this));
-
-        Permissions permissions = (Permissions)this.pm.getPlugin("Permissions");
-        if (permissions != null)
-        {
-            permissionHandler = permissions.getHandler();
-        }
 
         try
         {
@@ -150,23 +140,5 @@ public class Announcer extends JavaPlugin
         {
             log("[debug] " + msg);
         }
-    }
-
-    public static boolean has(Player player, String permission)
-    {
-        boolean result = false;
-        if (player.isOp())
-        {
-            result = true;
-        }
-        else if (permissionHandler != null)
-        {
-            result = permissionHandler.has(player, permission);
-        }
-        else
-        {
-            result = player.hasPermission(permission);
-        }
-        return result;
     }
 }

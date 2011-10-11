@@ -1,10 +1,9 @@
 name: Announcer
 main: de.codeinfection.quickwango.Announcer.Announcer
 version: "${project.version}"
+website: "http://mc-portal.de"
 authors:
   - "Quick_Wango"
-softdepends:
-  - Permissions
 description: "Automaticly announce text files to the server."
 commands:
   announce:
@@ -13,8 +12,6 @@ commands:
   reloadannouncer:
     usage: "/<command>"
     description: "Reloads the Announcer plugin"
-soft-depends:
-  - Permissions
 permissions:
   Announcer.*:
     description: "Allows the player to do everything"

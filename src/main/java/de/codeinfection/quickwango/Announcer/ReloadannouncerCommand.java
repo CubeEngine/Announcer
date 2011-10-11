@@ -21,7 +21,7 @@ public class ReloadannouncerCommand implements CommandExecutor
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
-        if (sender instanceof Player && !Announcer.has((Player)sender, "Announcer.reload"))
+        if (sender instanceof Player && ((Player)sender).hasPermission("Announcer.reload"))
         {
             sender.sendMessage(ChatColor.RED + "Permission denied!");
             return true;
