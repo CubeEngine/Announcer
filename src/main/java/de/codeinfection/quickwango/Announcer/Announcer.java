@@ -122,19 +122,29 @@ public class Announcer extends JavaPlugin
         this.config.save();
     }
 
+    public static void log(Level logLevel, String msg, Throwable t)
+    {
+        log.log(logLevel, "[Announcer] " + msg, t);
+    }
+
+    public static void log(Level logLevel, String msg)
+    {
+        log(logLevel, msg, null);
+    }
+
     public static void log(String msg)
     {
-        log.log(Level.INFO, "[Announcer] " + msg);
+        log(Level.INFO, msg);
     }
 
     public static void error(String msg)
     {
-        log.log(Level.SEVERE, "[Announcer] " + msg);
+        log(Level.SEVERE, msg);
     }
 
     public static void error(String msg, Throwable t)
     {
-        log.log(Level.SEVERE, "[Announcer] " + msg, t);
+        log(Level.SEVERE, msg, t);
     }
 
     public static void debug(String msg)
