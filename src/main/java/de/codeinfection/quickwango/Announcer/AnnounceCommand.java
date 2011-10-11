@@ -1,9 +1,9 @@
 package de.codeinfection.quickwango.Announcer;
 
-import java.io.BufferedReader;
+import de.codeinfection.quickwango.Announcer.Exceptions.AnnouncementException;
+import de.codeinfection.quickwango.Announcer.Exceptions.AnnouncementNotFoundException;
+import de.codeinfection.quickwango.Announcer.Exceptions.InvalidAnnouncementNameException;
 import java.io.File;
-import java.io.FileReader;
-import java.io.IOException;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;
@@ -18,13 +18,10 @@ import org.bukkit.entity.Player;
 public class AnnounceCommand implements CommandExecutor
 {
     protected Server server;
-    protected File announcementDir;
 
-    public AnnounceCommand(Server server, File dataFolder)
+    public AnnounceCommand(Server server)
     {
         this.server = server;
-        this.announcementDir = new File(dataFolder, "manualMessages");
-        this.announcementDir.mkdirs();
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
@@ -39,34 +36,33 @@ public class AnnounceCommand implements CommandExecutor
         }
         if (args.length > 0)
         {
-            if (!args[0].matches("[\\.\\\\/\\*\\?:\\|<>\"]"))
+            try
             {
-                File announcementFile = new File(this.announcementDir, args[0] + ".txt");
-                try
+                for (String line : Announcer.loadAnnouncement(args[0]))
                 {
-                    for (String line : Announcer.loadAnnouncement(announcementFile))
-                    {
-                        this.server.broadcastMessage(line);
-                    }
-                }
-                catch (AnnouncementLoadException e)
-                {
-                    switch (e.id)
-                    {
-                        case 1:
-                            sender.sendMessage(ChatColor.RED + "The requested announcement is not available!");
-                            break;
-                        case 2:
-                            sender.sendMessage(ChatColor.RED + "Failed to load the announcement!");
-                            Announcer.error("Failed to load the announcement '" + announcementFile.getName() + "'!");
-                            Announcer.error("\t>" + e.getMessage());
-                            break;
-                    }
+                    this.server.broadcastMessage(line);
                 }
             }
-            else
+            catch (AnnouncementNotFoundException e)
             {
-                sender.sendMessage(ChatColor.RED + "The given name is invalid!");
+                sender.sendMessage(ChatColor.RED + "The requested announcement is not available!");
+            }
+            catch (InvalidAnnouncementNameException e)
+            {
+                sender.sendMessage(ChatColor.RED + "The requested announcement has a invalid name!");
+            }
+            catch (AnnouncementException e)
+            {
+                sender.sendMessage(ChatColor.RED + "Failed to load the announcement!");
+                Throwable cause = e.getCause();
+                if (cause != null)
+                {
+                    Announcer.error(cause.getLocalizedMessage(), cause);
+                }
+            }
+            finally
+            {
+                Announcer.error("Failed to load the announcement '" + args[0] + "'!");
             }
         }
         else

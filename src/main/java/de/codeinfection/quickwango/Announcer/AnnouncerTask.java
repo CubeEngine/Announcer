@@ -1,5 +1,7 @@
 package de.codeinfection.quickwango.Announcer;
 
+import de.codeinfection.quickwango.Announcer.Exceptions.AnnouncementException;
+import de.codeinfection.quickwango.Announcer.Exceptions.NoAnnouncementsException;
 import java.io.File;
 import java.io.FileFilter;
 import java.util.ArrayList;
@@ -12,43 +14,40 @@ import org.bukkit.Server;
  */
 public class AnnouncerTask implements Runnable
 {
-    protected ArrayList<List<String>> announcenements;
+    protected ArrayList<List<String>> announcements;
     protected int current;
     protected Server server;
 
-    public AnnouncerTask(final Server server, final File dataFolder) throws AnnouncementLoadException
+    public AnnouncerTask(final Server server, final List<String> announcementNames) throws NoAnnouncementsException
     {
         this.current = 0;
         this.server = server;
-        this.announcenements = new ArrayList<List<String>>();
-        File announcementDir = new File(dataFolder, "scheduledMessages");
-        announcementDir.mkdirs();
-        File[] announcementFiles = announcementDir.listFiles(new TxtFilter());
-        for (File announcementFile : announcementFiles)
+        this.announcements = new ArrayList<List<String>>();
+        for (String name : announcementNames)
         {
             try
             {
-                this.announcenements.add(Announcer.loadAnnouncement(announcementFile));
-                Announcer.debug("Loaded " + announcementFile.getName() + "!");
+                this.announcements.add(Announcer.loadAnnouncement(name));
+                Announcer.debug("Loaded '" + name + "'!");
             }
-            catch (AnnouncementLoadException e)
+            catch (AnnouncementException e)
             {
-                Announcer.error("Failed to load the announcement '" + announcementFile.getName() + "'!");
-                Announcer.error("\t>" + e.getMessage());
+                Announcer.error("Failed to load the announcement '" + name + "'!");
+                Announcer.error("\t>" + e.getCause() != null ? e.getCause().getLocalizedMessage() : e.getClass().getSimpleName());
             }
         }
-        if (this.announcenements.isEmpty())
+        if (this.announcements.isEmpty())
         {
-            throw new AnnouncementLoadException("No announcement found!", 1);
+            throw new NoAnnouncementsException();
         }
-        Announcer.log("Loaded " + this.announcenements.size() + " message files!");
+        Announcer.log("Loaded " + this.announcements.size() + " message files!");
     }
 
     protected List<String> nextAnnouncement()
     {
-        List<String> announcement = this.announcenements.get(current);
+        List<String> announcement = this.announcements.get(current);
         ++this.current;
-        if (current >= this.announcenements.size())
+        if (current >= this.announcements.size())
         {
             this.current = 0;
         }

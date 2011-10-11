@@ -1,0 +1,5 @@
+interval: "15"
+instantStart: false
+debug: false
+directory: 'plugins/Announcer/announcements'
+announcements: []

@@ -1,5 +1,9 @@
 package de.codeinfection.quickwango.Announcer;
 
+import de.codeinfection.quickwango.Announcer.Exceptions.AnnouncementException;
+import de.codeinfection.quickwango.Announcer.Exceptions.AnnouncementNotFoundException;
+import de.codeinfection.quickwango.Announcer.Exceptions.InvalidAnnouncementNameException;
+import de.codeinfection.quickwango.Announcer.Exceptions.NoAnnouncementsException;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -12,43 +16,40 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
-import org.bukkit.util.config.Configuration;
 import org.bukkit.Server;
+import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.scheduler.BukkitScheduler;
 
 public class Announcer extends JavaPlugin
 {
     protected static final Logger logger = Logger.getLogger("Minecraft");
     public static boolean debugMode = false;
+    public static File announcementDir = null;
     
     protected Server server;
     protected PluginManager pm;
-    protected Configuration config;
+    protected FileConfiguration config;
     protected BukkitScheduler scheduler;
-    protected File dataFolder;
-
-    protected boolean instantStart = false;
 
     public void onEnable()
     {
         this.server = this.getServer();
         this.pm = this.server.getPluginManager();
-        this.config = this.getConfiguration();
+        this.config = this.getConfig();
         this.scheduler = this.server.getScheduler();
-        this.dataFolder = this.getDataFolder();
 
-        this.dataFolder.mkdirs();
-        // Create default config if it doesn't exist.
-        if (!(new File(this.dataFolder, "config.yml")).exists())
-        {
-            this.defaultConfig();
-        }
-        this.loadConfig();
+        log("Config: " + String.valueOf(this.config.getValues(true)));
+        log("DefaultConfig: " + String.valueOf(this.config.getDefaults().getValues(true)));
 
+        this.config.addDefault("directory", this.getDataFolder().getPath());
         debugMode = this.config.getBoolean("debug", debugMode);
-        this.instantStart = this.config.getBoolean("instantStart", this.instantStart);
+        announcementDir = new File(this.config.getString("directory"));
+        announcementDir.mkdirs();
+
+        log("Announcementdir: " + announcementDir.getAbsolutePath());
+        
         Pattern pattern = Pattern.compile("^(\\d+)([tsmhd])?$", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(this.config.getString("interval", "15"));
+        Matcher matcher = pattern.matcher(this.config.getString("interval"));
         matcher.find();
         int interval = 0;
         try
@@ -79,47 +80,34 @@ public class Announcer extends JavaPlugin
 
         debug("Calculated a interval of " + interval + " ticks");
 
-        this.getCommand("announce").setExecutor(new AnnounceCommand(this.server, this.dataFolder));
+        this.getCommand("announce").setExecutor(new AnnounceCommand(this.server));
         this.getCommand("reloadannouncer").setExecutor(new ReloadannouncerCommand(this));
 
         try
         {
-            AnnouncerTask task = new AnnouncerTask(server, dataFolder);
+            AnnouncerTask task = new AnnouncerTask(server, (List<String>)this.config.getList("announcements"));
 
-            debug("Start instantly? - " + String.valueOf(this.instantStart));
-            if (this.scheduler.scheduleAsyncRepeatingTask(this, task, (this.instantStart ? 0 : interval), interval) < 0)
+            if (this.scheduler.scheduleAsyncRepeatingTask(this, task, (this.config.getBoolean("instantStart") ? 0 : interval), interval) < 0)
             {
                 error("Failed to schedule the announcer task!");
                 return;
             }
         }
-        catch (AnnouncementLoadException e)
+        catch (NoAnnouncementsException e)
         {
             error("No announcements found!");
             return;
         }
 
-        System.out.println(this.getDescription().getName() + " (v" + this.getDescription().getVersion() + ") enabled");
+        this.saveConfig();
+
+        log(this.getDescription().getName() + " (v" + this.getDescription().getVersion() + ") enabled");
     }
 
     public void onDisable()
     {
         this.scheduler.cancelTasks(this);
         System.out.println(this.getDescription().getName() + " Disabled");
-    }
-
-    private void loadConfig()
-    {
-        this.config.load();
-    }
-
-    private void defaultConfig()
-    {
-        this.config.setProperty("interval", "15");
-        this.config.setProperty("instantStart", this.instantStart);
-        this.config.setProperty("debug", debugMode);
-
-        this.config.save();
     }
 
     public static void log(Level logLevel, String msg, Throwable t)
@@ -155,12 +143,24 @@ public class Announcer extends JavaPlugin
         }
     }
 
-    public static List<String> loadAnnouncement(File file) throws AnnouncementLoadException
+    public static List<String> loadAnnouncement(String name) throws AnnouncementException
+    {
+        if (!name.matches("[\\.\\\\/\\*\\?:\\|<>\"]"))
+        {
+            return loadAnnouncement(new File(announcementDir, name + ".txt"));
+        }
+        else
+        {
+            throw new InvalidAnnouncementNameException();
+        }
+    }
+
+    public static List<String> loadAnnouncement(File file) throws AnnouncementException
     {
         List<String> lines = new ArrayList<String>();
         if (!file.exists())
         {
-            throw new AnnouncementLoadException("Announcement does not exist", 1);
+            throw new AnnouncementNotFoundException();
         }
         try
         {
@@ -174,7 +174,7 @@ public class Announcer extends JavaPlugin
         }
         catch (IOException e)
         {
-            throw new AnnouncementLoadException("IOException: " + e.getLocalizedMessage(), e, 2);
+            throw new AnnouncementException("IOException: " + e.getLocalizedMessage(), e);
         }
         return lines;
     }
