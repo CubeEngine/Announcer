@@ -1,11 +1,9 @@
 package de.codeinfection.quickwango.Announcer;
 
-import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileFilter;
-import java.io.FileReader;
-import java.io.IOException;
 import java.util.ArrayList;
+import java.util.List;
 import org.bukkit.Server;
 
 /**
@@ -14,62 +12,52 @@ import org.bukkit.Server;
  */
 public class AnnouncerTask implements Runnable
 {
-    protected ArrayList<ArrayList<String>> messages;
+    protected ArrayList<List<String>> announcenements;
     protected int current;
     protected Server server;
 
-    public AnnouncerTask(final Server server, final File dataFolder) throws IOException
+    public AnnouncerTask(final Server server, final File dataFolder) throws AnnouncementLoadException
     {
         this.current = 0;
         this.server = server;
-        this.messages = new ArrayList<ArrayList<String>>();
-        File messagesDir = new File(dataFolder, "scheduledMessages");
-        messagesDir.mkdirs();
-        File[] messageFiles = messagesDir.listFiles(new TxtFilter());
-        BufferedReader reader = null;
-        String buffer = "";
-        for (File messageFile : messageFiles)
+        this.announcenements = new ArrayList<List<String>>();
+        File announcementDir = new File(dataFolder, "scheduledMessages");
+        announcementDir.mkdirs();
+        File[] announcementFiles = announcementDir.listFiles(new TxtFilter());
+        for (File announcementFile : announcementFiles)
         {
             try
             {
-                ArrayList<String> lines = new ArrayList<String>();
-                reader = new BufferedReader(new FileReader(messageFile));
-
-                while ((buffer = reader.readLine()) != null)
-                {
-                    lines.add(buffer.trim().replaceAll("&([a-f0-9])", "\u00A7$1"));
-                }
-
-                reader.close();
-                this.messages.add(lines);
-                Announcer.debug("Loaded " + messageFile.getName() + "!");
+                this.announcenements.add(Announcer.loadAnnouncement(announcementFile));
+                Announcer.debug("Loaded " + announcementFile.getName() + "!");
             }
-            catch (IOException e)
+            catch (AnnouncementLoadException e)
             {
-                Announcer.error("Failed to read " + messageFile.getName() + "!", e);
+                Announcer.error("Failed to load the announcement '" + announcementFile.getName() + "'!");
+                Announcer.error("\t>" + e.getMessage());
             }
         }
-        if (this.messages.isEmpty())
+        if (this.announcenements.isEmpty())
         {
-            throw new IOException("No message file found!");
+            throw new AnnouncementLoadException("No announcement found!", 1);
         }
-        Announcer.log("Loaded " + this.messages.size() + " message files!");
+        Announcer.log("Loaded " + this.announcenements.size() + " message files!");
     }
 
-    protected ArrayList<String> nextMessage()
+    protected List<String> nextAnnouncement()
     {
-        ArrayList<String> message = this.messages.get(current);
+        List<String> announcement = this.announcenements.get(current);
         ++this.current;
-        if (current >= this.messages.size())
+        if (current >= this.announcenements.size())
         {
             this.current = 0;
         }
-        return message;
+        return announcement;
     }
 
     public void run()
     {
-        for (String line : this.nextMessage())
+        for (String line : this.nextAnnouncement())
         {
             this.server.broadcastMessage(line);
         }

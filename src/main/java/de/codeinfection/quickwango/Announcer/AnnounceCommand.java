@@ -18,13 +18,13 @@ import org.bukkit.entity.Player;
 public class AnnounceCommand implements CommandExecutor
 {
     protected Server server;
-    protected File messageDir;
+    protected File announcementDir;
 
     public AnnounceCommand(Server server, File dataFolder)
     {
         this.server = server;
-        this.messageDir = new File(dataFolder, "manualMessages");
-        this.messageDir.mkdirs();
+        this.announcementDir = new File(dataFolder, "manualMessages");
+        this.announcementDir.mkdirs();
     }
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
@@ -41,28 +41,27 @@ public class AnnounceCommand implements CommandExecutor
         {
             if (!args[0].matches("[\\.\\\\/\\*\\?:\\|<>\"]"))
             {
-                File messageFile = new File(this.messageDir, args[0] + ".txt");
-                if (messageFile.exists())
+                File announcementFile = new File(this.announcementDir, args[0] + ".txt");
+                try
                 {
-                    try
+                    for (String line : Announcer.loadAnnouncement(announcementFile))
                     {
-                        BufferedReader reader = new BufferedReader(new FileReader(messageFile));
-                        String line = "";
-                        while ((line = reader.readLine()) != null)
-                        {
-                            this.server.broadcastMessage(line.trim().replaceAll("&([a-f0-9])", "\u00A7$1"));
-                        }
-                        reader.close();
-                    }
-                    catch (IOException e)
-                    {
-                        sender.sendMessage(ChatColor.RED + "Failed to load the announcement!");
-                        Announcer.error("Failed to load the message file " + messageFile.getName() + "!", e);
+                        this.server.broadcastMessage(line);
                     }
                 }
-                else
+                catch (AnnouncementLoadException e)
                 {
-                    sender.sendMessage(ChatColor.RED + "The requested announcement is not available!");
+                    switch (e.id)
+                    {
+                        case 1:
+                            sender.sendMessage(ChatColor.RED + "The requested announcement is not available!");
+                            break;
+                        case 2:
+                            sender.sendMessage(ChatColor.RED + "Failed to load the announcement!");
+                            Announcer.error("Failed to load the announcement '" + announcementFile.getName() + "'!");
+                            Announcer.error("\t>" + e.getMessage());
+                            break;
+                    }
                 }
             }
             else

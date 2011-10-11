@@ -1,7 +1,11 @@
 package de.codeinfection.quickwango.Announcer;
 
+import java.io.BufferedReader;
 import java.io.File;
+import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import java.util.regex.Matcher;
@@ -89,10 +93,9 @@ public class Announcer extends JavaPlugin
                 return;
             }
         }
-        catch (IOException e)
+        catch (AnnouncementLoadException e)
         {
-            error("An error occurred while reading the message files:");
-            error(e.getLocalizedMessage());
+            error("No announcements found!");
             return;
         }
 
@@ -140,5 +143,29 @@ public class Announcer extends JavaPlugin
         {
             log("[debug] " + msg);
         }
+    }
+
+    public static List<String> loadAnnouncement(File file) throws AnnouncementLoadException
+    {
+        List<String> lines = new ArrayList<String>();
+        if (!file.exists())
+        {
+            throw new AnnouncementLoadException("Announcement does not exist", 1);
+        }
+        try
+        {
+            BufferedReader reader = new BufferedReader(new FileReader(file));
+            String line = "";
+            while ((line = reader.readLine()) != null)
+            {
+                lines.add(line.trim().replaceAll("&([a-f0-9])", "\u00A7$1"));
+            }
+            reader.close();
+        }
+        catch (IOException e)
+        {
+            throw new AnnouncementLoadException("IOException: " + e.getLocalizedMessage(), e, 2);
+        }
+        return lines;
     }
 }
