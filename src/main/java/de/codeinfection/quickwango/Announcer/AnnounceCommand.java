@@ -59,10 +59,6 @@ public class AnnounceCommand implements CommandExecutor
                     Announcer.error(cause.getLocalizedMessage(), cause);
                 }
             }
-            finally
-            {
-                Announcer.error("Failed to load the announcement '" + args[0] + "'!");
-            }
         }
         else
         {
