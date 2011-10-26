@@ -3,7 +3,6 @@ package de.codeinfection.quickwango.Announcer;
 import de.codeinfection.quickwango.Announcer.Exceptions.AnnouncementException;
 import de.codeinfection.quickwango.Announcer.Exceptions.AnnouncementNotFoundException;
 import de.codeinfection.quickwango.Announcer.Exceptions.InvalidAnnouncementNameException;
-import java.io.File;
 import org.bukkit.ChatColor;
 import org.bukkit.Server;
 import org.bukkit.command.Command;

@@ -17,7 +17,7 @@ import java.util.regex.Pattern;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.Server;
-import org.bukkit.configuration.file.FileConfiguration;
+import org.bukkit.configuration.Configuration;
 import org.bukkit.scheduler.BukkitScheduler;
 
 public class Announcer extends JavaPlugin
@@ -28,28 +28,26 @@ public class Announcer extends JavaPlugin
     
     protected Server server;
     protected PluginManager pm;
-    protected FileConfiguration config;
+    protected AnnouncerConfiguration config;
     protected BukkitScheduler scheduler;
 
     public void onEnable()
     {
         this.server = this.getServer();
         this.pm = this.server.getPluginManager();
-        this.config = this.getConfig();
         this.scheduler = this.server.getScheduler();
 
-        log("Config: " + String.valueOf(this.config.getValues(true)));
-        log("DefaultConfig: " + String.valueOf(this.config.getDefaults().getValues(true)));
+        Configuration configFile = this.getConfig();
+        configFile.options().copyDefaults(true);
+        configFile.addDefault("directory", this.getDataFolder().getPath() + File.separator + "announcements");
+        this.config = new AnnouncerConfiguration(configFile);
 
-        this.config.addDefault("directory", this.getDataFolder().getPath());
-        debugMode = this.config.getBoolean("debug", debugMode);
-        announcementDir = new File(this.config.getString("directory"));
+        debugMode = this.config.debug;
+        announcementDir = new File(this.config.directory);
         announcementDir.mkdirs();
-
-        log("Announcementdir: " + announcementDir.getAbsolutePath());
         
         Pattern pattern = Pattern.compile("^(\\d+)([tsmhd])?$", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(this.config.getString("interval"));
+        Matcher matcher = pattern.matcher(this.config.interval);
         matcher.find();
         int interval = 0;
         try
@@ -85,9 +83,9 @@ public class Announcer extends JavaPlugin
 
         try
         {
-            AnnouncerTask task = new AnnouncerTask(server, (List<String>)this.config.getList("announcements"));
+            AnnouncerTask task = new AnnouncerTask(server, this.config.announcements);
 
-            if (this.scheduler.scheduleAsyncRepeatingTask(this, task, (this.config.getBoolean("instantStart") ? 0 : interval), interval) < 0)
+            if (this.scheduler.scheduleAsyncRepeatingTask(this, task, (this.config.instantStart ? 0 : interval), interval) < 0)
             {
                 error("Failed to schedule the announcer task!");
                 return;
@@ -96,7 +94,6 @@ public class Announcer extends JavaPlugin
         catch (NoAnnouncementsException e)
         {
             error("No announcements found!");
-            return;
         }
 
         this.saveConfig();
