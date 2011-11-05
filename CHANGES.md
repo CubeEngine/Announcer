@@ -4,7 +4,7 @@
 Version 1.2.0
 
 * Removed Permissions support
-* added chat colors
+* added chat colors to commands
 * reworked config handling
 * moved automated and manuel announcements in one directory
 
