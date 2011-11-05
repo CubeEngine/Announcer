@@ -12,12 +12,13 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 import org.bukkit.plugin.PluginManager;
 import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.Server;
 import org.bukkit.configuration.Configuration;
+import org.bukkit.configuration.InvalidConfigurationException;
+import org.bukkit.event.Event.Priority;
+import org.bukkit.event.Event.Type;
 import org.bukkit.scheduler.BukkitScheduler;
 
 public class Announcer extends JavaPlugin
@@ -25,6 +26,7 @@ public class Announcer extends JavaPlugin
     protected static final Logger logger = Logger.getLogger("Minecraft");
     public static boolean debugMode = false;
     public static File announcementDir = null;
+    private AnnouncerTask task;
     
     protected Server server;
     protected PluginManager pm;
@@ -40,55 +42,38 @@ public class Announcer extends JavaPlugin
         Configuration configFile = this.getConfig();
         configFile.options().copyDefaults(true);
         configFile.addDefault("directory", this.getDataFolder().getPath() + File.separator + "announcements");
-        this.config = new AnnouncerConfiguration(configFile);
+        try
+        {
+            this.config = new AnnouncerConfiguration(configFile);
+        }
+        catch (InvalidConfigurationException e)
+        {
+            error("Failed to load the configuration due to an invalid value!", e);
+            error("Staying in a zombie state...");
+            return;
+        }
 
         debugMode = this.config.debug;
         announcementDir = new File(this.config.directory);
         announcementDir.mkdirs();
-        
-        Pattern pattern = Pattern.compile("^(\\d+)([tsmhd])?$", Pattern.CASE_INSENSITIVE);
-        Matcher matcher = pattern.matcher(this.config.interval);
-        matcher.find();
-        int interval = 0;
-        try
-        {
-            interval = Integer.valueOf(String.valueOf(matcher.group(1)));
-        }
-        catch (NumberFormatException e)
-        {
-            error("The given interval was invalid!", e);
-            return;
-        }
-        String unitSuffix = matcher.group(2);
-        if (unitSuffix == null)
-        {
-            unitSuffix = "m";
-        }
-        switch (unitSuffix.toLowerCase().charAt(0))
-        {
-            case 'd':
-                interval *= 24;
-            case 'h':
-                interval *= 60;
-            case 'm':
-                interval *= 60;
-            case 's':
-                interval *= 20;
-        }
 
-        debug("Calculated a interval of " + interval + " ticks");
+        debug("Calculated a interval of " + this.config.interval + " ticks");
 
         this.getCommand("announce").setExecutor(new AnnounceCommand(this.server));
         this.getCommand("reloadannouncer").setExecutor(new ReloadannouncerCommand(this));
 
         try
         {
-            AnnouncerTask task = new AnnouncerTask(server, this.config.announcements);
-
-            if (this.scheduler.scheduleAsyncRepeatingTask(this, task, (this.config.instantStart ? 0 : interval), interval) < 0)
+            this.task = new AnnouncerTask(this);
+            if (task.start())
+            {
+                AnnouncerPlayerListener playerListener = new AnnouncerPlayerListener(this, this.task);
+                this.pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Monitor, this);
+                this.pm.registerEvent(Type.PLAYER_QUIT, playerListener, Priority.Monitor, this);
+            }
+            else
             {
                 error("Failed to schedule the announcer task!");
-                return;
             }
         }
         catch (NoAnnouncementsException e)
@@ -98,13 +83,13 @@ public class Announcer extends JavaPlugin
 
         this.saveConfig();
 
-        log(this.getDescription().getName() + " (v" + this.getDescription().getVersion() + ") enabled");
+        log("Version " + this.getDescription().getVersion() + " enabled");
     }
 
     public void onDisable()
     {
-        this.scheduler.cancelTasks(this);
-        System.out.println(this.getDescription().getName() + " Disabled");
+        this.task.stop(true);
+        log("Version " + this.getDescription().getVersion() + " disabled");
     }
 
     public static void log(Level logLevel, String msg, Throwable t)
