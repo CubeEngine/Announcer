@@ -1,5 +1,6 @@
-interval: "15"
+interval: "15m"
 instantStart: false
 debug: false
 directory: 'plugins/Announcer/announcements'
-announcements: []
+announcements:
+  - example
