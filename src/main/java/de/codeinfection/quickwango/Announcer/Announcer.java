@@ -88,7 +88,10 @@ public class Announcer extends JavaPlugin
 
     public void onDisable()
     {
-        this.task.stop(true);
+        if (this.task != null)
+        {
+            this.task.stop(true);
+        }
         log("Version " + this.getDescription().getVersion() + " disabled");
     }
 

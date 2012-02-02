@@ -52,7 +52,7 @@ public class AnnouncerTask implements Runnable
             catch (AnnouncementException e)
             {
                 Announcer.error("Failed to load the announcement '" + name + "'!");
-                Announcer.error("\t>" + e.getCause() != null ? e.getCause().getLocalizedMessage() : e.getClass().getSimpleName());
+                Announcer.error("Caused by: " + (e.getCause() != null ? e.getCause().getLocalizedMessage() : e.getClass().getSimpleName()));
             }
         }
         if (this.announcements.isEmpty())
