@@ -1,14 +1,16 @@
 package de.codeinfection.quickwango.Announcer;
 
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.EventPriority;
+import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
-import org.bukkit.event.player.PlayerListener;
 import org.bukkit.event.player.PlayerQuitEvent;
 
 /**
  *
  * @author CodeInfection
  */
-public class AnnouncerPlayerListener extends PlayerListener
+public class AnnouncerPlayerListener implements Listener
 {
     private final Announcer plugin;
     private final AnnouncerTask task;
@@ -19,7 +21,7 @@ public class AnnouncerPlayerListener extends PlayerListener
         this.task = task;
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerJoin(PlayerJoinEvent event)
     {
         if (!this.task.isRunning())
@@ -28,7 +30,7 @@ public class AnnouncerPlayerListener extends PlayerListener
         }
     }
 
-    @Override
+    @EventHandler(priority = EventPriority.MONITOR)
     public void onPlayerQuit(PlayerQuitEvent event)
     {
         if (this.plugin.getServer().getOnlinePlayers().length - 1 <= 0)

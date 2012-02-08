@@ -12,13 +12,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
-import org.bukkit.plugin.PluginManager;
-import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.Server;
 import org.bukkit.configuration.Configuration;
 import org.bukkit.configuration.InvalidConfigurationException;
-import org.bukkit.event.Event.Priority;
-import org.bukkit.event.Event.Type;
+import org.bukkit.plugin.PluginManager;
+import org.bukkit.plugin.java.JavaPlugin;
 import org.bukkit.scheduler.BukkitScheduler;
 
 public class Announcer extends JavaPlugin
@@ -68,8 +66,7 @@ public class Announcer extends JavaPlugin
             if (task.start())
             {
                 AnnouncerPlayerListener playerListener = new AnnouncerPlayerListener(this, this.task);
-                this.pm.registerEvent(Type.PLAYER_JOIN, playerListener, Priority.Monitor, this);
-                this.pm.registerEvent(Type.PLAYER_QUIT, playerListener, Priority.Monitor, this);
+                this.pm.registerEvents(playerListener, this);
             }
             else
             {
