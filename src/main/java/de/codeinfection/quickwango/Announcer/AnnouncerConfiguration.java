@@ -23,10 +23,7 @@ public class AnnouncerConfiguration
         this.instantStart = config.getBoolean("instantStart");
         this.debug = config.getBoolean("debug");
         this.directory = config.getString("directory");
-        this.announcements = (List<String>)config.getList("announcements");
-
-
-
+        this.announcements = config.getStringList("announcements");
 
         Pattern pattern = Pattern.compile("^(\\d+)([tsmhd])?$", Pattern.CASE_INSENSITIVE);
         Matcher matcher = pattern.matcher(config.getString("interval"));

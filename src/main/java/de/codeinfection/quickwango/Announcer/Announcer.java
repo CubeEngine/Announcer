@@ -8,6 +8,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -21,7 +22,7 @@ import org.bukkit.scheduler.BukkitScheduler;
 
 public class Announcer extends JavaPlugin
 {
-    protected static final Logger logger = Logger.getLogger("Minecraft");
+    protected static Logger logger = null;
     public static boolean debugMode = false;
     public static File announcementDir = null;
     private AnnouncerTask task;
@@ -33,13 +34,17 @@ public class Announcer extends JavaPlugin
 
     public void onEnable()
     {
+        logger = this.getLogger();
         this.server = this.getServer();
         this.pm = this.server.getPluginManager();
         this.scheduler = this.server.getScheduler();
 
+        this.reloadConfig();
         Configuration configFile = this.getConfig();
-        configFile.options().copyDefaults(true);
         configFile.addDefault("directory", this.getDataFolder().getPath() + File.separator + "announcements");
+        configFile.options().copyDefaults(true);
+        this.saveConfig();
+        
         try
         {
             this.config = new AnnouncerConfiguration(configFile);
@@ -78,8 +83,6 @@ public class Announcer extends JavaPlugin
             error("No announcements found!");
         }
 
-        this.saveConfig();
-
         log("Version " + this.getDescription().getVersion() + " enabled");
     }
 
@@ -88,13 +91,17 @@ public class Announcer extends JavaPlugin
         if (this.task != null)
         {
             this.task.stop(true);
+            this.task = null;
         }
+        announcementDir = null;
+        this.config = null;
+        
         log("Version " + this.getDescription().getVersion() + " disabled");
     }
 
     public static void log(Level logLevel, String msg, Throwable t)
     {
-        logger.log(logLevel, "[Announcer] " + msg, t);
+        logger.log(logLevel, msg, t);
     }
 
     public static void log(Level logLevel, String msg)
@@ -147,7 +154,7 @@ public class Announcer extends JavaPlugin
         try
         {
             BufferedReader reader = new BufferedReader(new FileReader(file));
-            String line = "";
+            String line;
             while ((line = reader.readLine()) != null)
             {
                 lines.add(line.trim().replaceAll("&([a-f0-9])", "\u00A7$1"));
