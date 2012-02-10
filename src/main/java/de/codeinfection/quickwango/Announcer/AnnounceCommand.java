@@ -8,7 +8,7 @@ import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
+import org.bukkit.permissions.Permissible;
 
 /**
  *
@@ -25,13 +25,10 @@ public class AnnounceCommand implements CommandExecutor
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
-        if (sender instanceof Player)
+        if (sender instanceof Permissible && !((Permissible)sender).hasPermission("Announcer.announce"))
         {
-            if (!((Player)sender).hasPermission("Announcer.announce"))
-            {
-                sender.sendMessage(ChatColor.RED + "Permission denied!");
-                return true;
-            }
+            sender.sendMessage(ChatColor.RED + "Permission denied!");
+            return true;
         }
         if (args.length > 0)
         {
