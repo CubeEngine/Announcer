@@ -1,5 +1,6 @@
 Changes
 ========
+
 Version 1.3.1
 -------------
 - Fixed permission check in reloadannouncer command
