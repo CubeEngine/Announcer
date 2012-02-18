@@ -8,7 +8,6 @@ import org.bukkit.Server;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.permissions.Permissible;
 
 /**
  *
@@ -25,42 +24,44 @@ public class AnnounceCommand implements CommandExecutor
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
-        if (sender instanceof Permissible && !((Permissible)sender).hasPermission("Announcer.announce"))
+        if (sender.hasPermission("Announcer.announce"))
         {
-            sender.sendMessage(ChatColor.RED + "Permission denied!");
-            return true;
-        }
-        if (args.length > 0)
-        {
-            try
+            if (args.length > 0)
             {
-                for (String line : Announcer.loadAnnouncement(args[0]))
+                try
                 {
-                    this.server.broadcastMessage(line);
+                    for (String line : Announcer.loadAnnouncement(args[0]))
+                    {
+                        this.server.broadcastMessage(line);
+                    }
+                }
+                catch (AnnouncementNotFoundException e)
+                {
+                    sender.sendMessage(ChatColor.RED + "The requested announcement is not available!");
+                }
+                catch (InvalidAnnouncementNameException e)
+                {
+                    sender.sendMessage(ChatColor.RED + "The requested announcement has a invalid name!");
+                }
+                catch (AnnouncementException e)
+                {
+                    sender.sendMessage(ChatColor.RED + "Failed to load the announcement!");
+                    Throwable cause = e.getCause();
+                    if (cause != null)
+                    {
+                        Announcer.error(cause.getLocalizedMessage(), cause);
+                    }
                 }
             }
-            catch (AnnouncementNotFoundException e)
+            else
             {
-                sender.sendMessage(ChatColor.RED + "The requested announcement is not available!");
-            }
-            catch (InvalidAnnouncementNameException e)
-            {
-                sender.sendMessage(ChatColor.RED + "The requested announcement has a invalid name!");
-            }
-            catch (AnnouncementException e)
-            {
-                sender.sendMessage(ChatColor.RED + "Failed to load the announcement!");
-                Throwable cause = e.getCause();
-                if (cause != null)
-                {
-                    Announcer.error(cause.getLocalizedMessage(), cause);
-                }
+                sender.sendMessage(ChatColor.RED + "No file name given!");
+                return false;
             }
         }
         else
         {
-            sender.sendMessage(ChatColor.RED + "No file name given!");
-            return false;
+            sender.sendMessage(ChatColor.RED + "Permission denied!");
         }
         return true;
     }

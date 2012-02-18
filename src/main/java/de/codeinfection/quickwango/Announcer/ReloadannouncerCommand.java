@@ -4,7 +4,6 @@ import org.bukkit.ChatColor;
 import org.bukkit.command.Command;
 import org.bukkit.command.CommandExecutor;
 import org.bukkit.command.CommandSender;
-import org.bukkit.permissions.Permissible;
 
 /**
  *
@@ -21,15 +20,16 @@ public class ReloadannouncerCommand implements CommandExecutor
 
     public boolean onCommand(CommandSender sender, Command command, String label, String[] args)
     {
-        if (sender instanceof Permissible && !((Permissible)sender).hasPermission("Announcer.reload"))
+        if (sender.hasPermission("Announcer.reload"))
+        {
+            this.plugin.onDisable();
+            this.plugin.onEnable();
+            sender.sendMessage(ChatColor.GREEN + "Announcer was successfully reloaded!");
+        }
+        else
         {
             sender.sendMessage(ChatColor.RED + "Permission denied!");
-            return true;
         }
-
-        this.plugin.onDisable();
-        this.plugin.onEnable();
-        sender.sendMessage(ChatColor.GREEN + "Announcer was successfully reloaded!");
 
         return true;
     }
