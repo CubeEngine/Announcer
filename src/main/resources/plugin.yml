@@ -1,7 +1,8 @@
 name: Announcer
-main: de.codeinfection.quickwango.Announcer.Announcer
-version: "${project.version}"
-website: "http://mc-portal.de"
+main: de.cubeisland.Announcer.Announcer
+version: ${project.version}
+website: http://cubeisland.de
+dev-url: http://dev.bukkit.org/server-mods/announcr
 authors:
   - "Quick_Wango"
 description: "Automaticly announce text files to the server."
