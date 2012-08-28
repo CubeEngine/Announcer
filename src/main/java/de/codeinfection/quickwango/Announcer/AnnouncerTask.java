@@ -66,6 +66,7 @@ public class AnnouncerTask implements Runnable
     {
         if (this.plugin.getServer().getOnlinePlayers().length > 0)
         {
+            this.delay = Math.max(0, this.delay);
             this.taskId = this.scheduler.scheduleAsyncRepeatingTask(this.plugin, this, this.delay, this.plugin.config.interval);
             if (this.taskId < 0)
             {
