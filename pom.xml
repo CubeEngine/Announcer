@@ -7,7 +7,7 @@
     <packaging>jar</packaging>
 
     <name>Announcer</name>
-    <url>http://mc-portal.de</url>
+    <url>http://cubeisland.de</url>
     <description>A Bukkit plugin to broadcast scheduled messages.</description>
 
     <properties>
@@ -17,7 +17,7 @@
     <repositories>
         <repository>
             <id>bukkit-repo</id>
-            <url>http://repo.bukkit.org/content/groups/public</url>
+            <url>http://repo.bukkit.org/content/groups/public/</url>
         </repository>
     </repositories>
 
@@ -25,7 +25,7 @@
         <dependency>
             <groupId>org.bukkit</groupId>
             <artifactId>bukkit</artifactId>
-            <version>1.1-R5-SNAPSHOT</version>
+            <version>1.3.2-R0.2-SNAPSHOT</version>
         </dependency>
     </dependencies>
 
