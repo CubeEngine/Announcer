@@ -16,8 +16,8 @@
 
     <repositories>
         <repository>
-            <id>bukkit-repo</id>
-            <url>http://repo.bukkit.org/content/groups/public/</url>
+            <id>cubeisland-repo</id>
+            <url>http://repo.cubeisland.de/</url>
         </repository>
     </repositories>
 
